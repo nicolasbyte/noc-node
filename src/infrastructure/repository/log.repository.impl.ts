@@ -4,7 +4,7 @@ import { LogSeverityLevel } from "../../domain/enum/logSeverityLevel";
 import { LogRepository } from "../../domain/repository/log.repository";
 
 export class LogRepositoryImpl implements LogRepository {
-  constructor(private readonly logDatasource: LogDatasource) {}
+  constructor(private readonly logDatasource: LogDatasource) { }
 
   async saveLog(log: LogEntity): Promise<void> {
     return await this.logDatasource.saveLog(log);

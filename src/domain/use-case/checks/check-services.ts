@@ -1,4 +1,4 @@
-import { LogEntity } from "../../entities/log.entity";
+import { LogEntity, LogEntityOptions } from "../../entities/log.entity";
 import { LogSeverityLevel } from "../../enum/logSeverityLevel";
 import { LogRepository } from "../../repository/log.repository";
 
@@ -8,6 +8,7 @@ interface CheckServiceUseCase {
 
 type SuccessCallback = (() => void) | undefined;
 type ErrorCallback = ((error: string) => void) | undefined;
+const origin: string = 'check-service.ts'
 
 export class CheckServices implements CheckServiceUseCase {
   constructor(
@@ -28,14 +29,26 @@ export class CheckServices implements CheckServiceUseCase {
           `Failed to fetch the URL ${url} with status ${response.status}`
         );
       }
+      const log: LogEntityOptions = {
+        level: LogSeverityLevel.LOW,
+        message: `URL ${url} is reachable`,
+        origin
+      }
       this.logRepository.saveLog(
-        new LogEntity(LogSeverityLevel.LOW, `URL ${url} is reachable`)
+        new LogEntity(log)
       );
       this.successCallback && this.successCallback();
       return true;
     } catch (error) {
+
+      const log: LogEntityOptions = {
+        level: LogSeverityLevel.HIGH,
+        message: `URL ${url} is not reachable`,
+        origin
+      }
+
       this.logRepository.saveLog(
-        new LogEntity(LogSeverityLevel.HIGH, `URL ${url} is not reachable`)
+        new LogEntity(log)
       );
       this.errorCallback && this.errorCallback(error as string);
       return false;

@@ -32,7 +32,7 @@ export class FileSystemDatasource implements LogDatasource {
   }
 
   async saveLog(newLog: LogEntity): Promise<void> {
-    fs.appendFileSync(this.allLogsPath, newLog.toString() + "\n");
+    fs.appendFileSync(this.allLogsPath, newLog.toString().trim() + "\n");
     fs.appendFileSync(this.getFilePath(newLog.level), newLog.toString() + "\n");
   }
 
@@ -46,7 +46,12 @@ export class FileSystemDatasource implements LogDatasource {
 
   async getLogs(severityLevel: LogSeverityLevel): Promise<LogEntity[]> {
     const logsStringified = await this.getStringifiedLogs(severityLevel);
-    return logsStringified.split("\n").map((log) => LogEntity.fromJson(log));
+
+    if (logsStringified.length == 0) {
+      return []
+    }
+
+    return logsStringified.trim().split("\n").map((log) => LogEntity.fromJson(log));
   }
 
   private getFilePath(severityLevel: LogSeverityLevel): string {

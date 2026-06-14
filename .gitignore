@@ -9,3 +9,6 @@ dist/
 
 #Logs
 logs/
+mongo/
+postgres/
+/src/generated/prisma
